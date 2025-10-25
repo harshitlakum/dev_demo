@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-demo
+  labels: { app: dev-demo }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: dev-demo }
+  template:
+    metadata:
+      labels: { app: dev-demo }
+    spec:
+      containers:
+        - name: dev-demo
+          image: dev_demo:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
